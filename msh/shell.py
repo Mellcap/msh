@@ -31,8 +31,18 @@ def tokenize(string):
     return shlex.split(string)
 
 def execute(cmd_tokens):
-    # execute command
-    os.execvp(cmd_tokens[0], cmd_tokens)
+    pid = os.fork()
+    if pid == 0:
+        # child process
+        # execute command
+        os.execvp(cmd_tokens[0], cmd_tokens)
+    elif pid > 0:
+        # parent process
+        while True:
+            wpid, status = os.waitpid(pid, 0)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                break
+
     # return status indicating to wait for next command in shell_loop
     return SHELL_STATUS_RUN
 
