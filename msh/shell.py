@@ -3,9 +3,12 @@
 import os
 import sys
 import shlex
+from msh.constants import *
+from msh.builtins.cd import *
 
-SHELL_STATUS_RUN = 1
-SHELL_STATUS_STOP = 0
+# SHELL_STATUS_RUN = 1
+# SHELL_STATUS_STOP = 0
+built_in_cmds = {}
 
 
 def shell_loop():
@@ -24,13 +27,28 @@ def shell_loop():
 
 
 def main():
+    init()
     shell_loop()
+
+
+def init():
+    register_command("cd", cd)
+
+
+def register_command(name, func):
+    built_in_cmds[name] = func
 
 
 def tokenize(string):
     return shlex.split(string)
 
+
 def execute(cmd_tokens):
+    cmd_name = cmd_tokens[0]
+    cmd_args = cmd_tokens[1:]
+    if cmd_name in built_in_cmds:
+        return built_in_cmds[cmd_name](cmd_args)
+
     pid = os.fork()
     if pid == 0:
         # child process
