@@ -5,6 +5,7 @@ import sys
 import shlex
 from msh.constants import *
 from msh.builtins.cd import *
+from msh.builtins.exit import *
 
 # SHELL_STATUS_RUN = 1
 # SHELL_STATUS_STOP = 0
@@ -33,6 +34,7 @@ def main():
 
 def init():
     register_command("cd", cd)
+    register_command("exit", exit)
 
 
 def register_command(name, func):
